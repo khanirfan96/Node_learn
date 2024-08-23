@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple HTML Page</title>
+</head>
+
+<body>
+    <header>
+        <h1>Welcome to My URL Shortener</h1>
+    </header>
+
+     <% if (locals.id) { %>
+        <p>URL Generated: <a href="http://localhost:8001/<%= id %>"> Link</a></p>
+     <% } %>
+
+    <div>
+        <form method="POST" action="/url">
+            <label>Enter Your Original URL</label>
+            <input type="text" name="url" placeholder="Enter Your URL" />
+            <button type="submit">Generate</button>
+        </form>
+    </div>
+
+    <div>
+        <% if (locals.urls) { %>
+            <% console.log(urls, 'urls'); %>
+            <table>
+                <thead>
+                    <th>S. No</th>
+                    <th>ShortID</th>
+                    <th>Redirect</th>
+                    <th>Clcks</th>
+                </thead>
+                <tbody>
+                    <% urls.forEach((url, index) => { %>
+                        <tr>
+                            <td><%= index + 1 %></td>
+                            <td><%= url.shortId %></td>
+                            <td><%= url.redirectURL %></td>
+                            <td><%= url.visitHistory.length %></td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        <% } %>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Simple HTML Page. All rights reserved.</p>
+    </footer>
+</body>
+
+</html>

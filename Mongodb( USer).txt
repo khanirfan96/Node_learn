@@ -1,0 +1,11 @@
+//// Mongodb
+Username - irfankik141
+password - Ed0jG3I8S2nw8Nlc
+
+
+// compass
+mongodb+srv://irfankik141:Ed0jG3I8S2nw8Nlc@cluster0.wj6xtgc.mongodb.net/
+
+
+shell ///
+mongosh "mongodb+srv://cluster0.wj6xtgc.mongodb.net/" --apiVersion 1 --username irfankik141
