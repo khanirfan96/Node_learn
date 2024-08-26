@@ -15,4 +15,13 @@ next();
 
 }
 
-module.exports = {restricToLoggedinUserOnly, }
+async function checkAuth(req, res, next) {
+    const userUid = req.cookies?.uid;
+
+    const user = getUSer(userUid);
+
+    req.user = user;
+    next();
+}
+
+module.exports = {restricToLoggedinUserOnly, checkAuth}
