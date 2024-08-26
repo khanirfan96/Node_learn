@@ -1,9 +1,14 @@
 const express = require('express');
 const path = require('path');
+const cookieParser = require('cookie-parser');
 const { handleconnectDB } = require('./config');
-const urlRoute = require("./routes/url");
+
 const URL = require('./models/url');
+
+const urlRoute = require("./routes/url");
 const staticRoute = require('./routes/staticrouter'); 
+const userRoute = require('./routes/user');
+const { restricToLoggedinUserOnly } = require('./middleware/auth');
 
 const app = express();
 const port = 8001;
@@ -17,9 +22,11 @@ app.set('views', path.resolve("./views"));
 
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
+app.use(cookieParser());
 
-app.use('/url', urlRoute);
-app.use('/static', staticRoute);
+app.use('/url', restricToLoggedinUserOnly, urlRoute);
+app.use('/user', userRoute);
+app.use('/', staticRoute);
 
 app.get('/:shortId', async (req, res) => {
     const shortID = req.params.shortId;
