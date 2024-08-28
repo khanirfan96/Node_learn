@@ -1,47 +1,45 @@
 const express = require('express');
 const path = require('path');
+require('dotenv').config()
 const cookieParser = require('cookie-parser');
-const { handleconnectDB } = require('./config');
+const { handleconnectDB } = require('./db/db');
 
 const URL = require('./models/url');
-
-const urlRoute = require("./routes/url");
-const staticRoute = require('./routes/staticrouter'); 
-const userRoute = require('./routes/user');
-const { restricToLoggedinUserOnly, checkAuth } = require('./middleware/auth');
 
 const app = express();
 const port = 8001;
 
-handleconnectDB('mongodb+srv://irfankik141:Ed0jG3I8S2nw8Nlc@cluster0.wj6xtgc.mongodb.net/short-url')
-    .then(() => console.log('MongoDB Connected'));
+handleconnectDB().then(() => console.log('MongoDB Connected'));
 
 
 app.set("view engine", "ejs");
 app.set('views', path.resolve("./views"));
 
 app.use(express.json());
-app.use(express.urlencoded({extended: false}));
+app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-app.use('/url', restricToLoggedinUserOnly, urlRoute);
-app.use('/user', userRoute);
-app.use('/', checkAuth, staticRoute);
+// app.use('/url', restricToLoggedinUserOnly, urlRoute);
+// app.use('/user', userRoute);
+// app.use('/', checkAuth, staticRoute);
+app.use('/', function (req, res, next) {
+    next()
+}, require('./routes/index'))
 
 app.get('/:shortId', async (req, res) => {
     const shortID = req.params.shortId;
-    
+
     try {
         const entry = await URL.findOneAndUpdate(
-            { shortId: shortID }, 
-            { 
-                $push: { 
-                    visitHistory: { timestamp: Date.now() } 
-                } 
+            { shortId: shortID },
+            {
+                $push: {
+                    visitHistory: { timestamp: Date.now() }
+                }
             },
             { new: true }
         );
-        
+
         if (entry && entry.redirectURL) {
             return res.redirect(entry.redirectURL);
         } else {
